@@ -27,9 +27,9 @@ def BIC(y,p_m=2,r_m =None, s_m = None):
                 else:
                     if (r,s)!=(0,0):
                         # grid_iterative in lmbd,gamma,phi
-                        lmbd_range = [np.linspace(-0.8,0.8,4).round(3).tolist() for i in np.arange(r)] 
-                        gamma_range = [np.linspace(0.2,0.8,4).round(3).tolist() for i in np.arange(s)]
-                        phi_range = [np.linspace(0.5,np.pi-0.4,4).round(3).tolist() for i in np.arange(s)]
+                        lmbd_range = [np.linspace(-0.5,0.5,3).round(3).tolist() for i in np.arange(r)] 
+                        gamma_range = [np.linspace(0.2,0.8,3).round(3).tolist() for i in np.arange(s)]
+                        phi_range = [np.linspace(0.5,np.pi-0.4*np.pi,3).round(3).tolist() for i in np.arange(s)]
                         alpha_range = lmbd_range+gamma_range+phi_range
                         index = pd.MultiIndex.from_product(alpha_range)
                         LS_result = pd.Series(index=index)
@@ -42,23 +42,22 @@ def BIC(y,p_m=2,r_m =None, s_m = None):
                             (len(gamma) > len(set(gamma))) or
                             (len(phi) > len(set(phi)))):
                                 continue
-                            LS_result.loc[alpha] = np.log(BCD_LS(y,p,r,s,P,n_iter=20,lmbd=np.array(lmbd), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-2,result_show=False)['Loss'])
-                            ML_result.loc[alpha] = (BCD_MLE(y,p,r,s,P,n_iter=20,lmbd=np.array(lmbd), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-2,result_show=False)['Loss'])
+                            
+                            LS_result.loc[alpha] = np.log(np.linalg.det(BCD_LS(y,p,r,s,P,n_iter=20,lmbd=np.array(lmbd), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-3,result_show=False)['Sigma']))
+                            ML_result.loc[alpha] = np.log(np.linalg.det(BCD_MLE(y,p,r,s,P,n_iter=20,lmbd=np.array(lmbd), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-3,result_show=False)['Sigma']))
+                            
                         LS_log_loss = np.min(LS_result)
                         ML_log_loss = np.min(ML_result)
                         LS_initial_value = LS_result.idxmin()
                         ML_initial_value = ML_result.idxmin()
                         LS_BIC_table.loc[p,r,s]['initial'] = LS_initial_value
                         ML_BIC_table.loc[p,r,s]['initial'] = ML_initial_value
-                        print(p,r,s)
                     else:
-                        print(p,r,s)
-                        LS_log_loss=np.log(BCD_LS(y,p,r,s,P,n_iter=20,lmbd=np.array([lmbd]), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-2,result_show=False)['Loss'])
-                        ML_log_loss=(BCD_MLE(y,p,r,s,P,n_iter=20,lmbd=np.array([lmbd]), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-2,result_show=False)['Loss'])
-                d_m = p+r+2*s+(N**2)*(p+r+2*s) # No. of all params
+                        LS_log_loss=np.log(np.linalg.det(BCD_LS(y,p,r,s,P,n_iter=20,lmbd=np.array([lmbd]), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-2,result_show=False)['Sigma']))
+                        ML_log_loss=np.log(np.linalg.det(BCD_MLE(y,p,r,s,P,n_iter=20,lmbd=np.array([lmbd]), gamma = np.array([gamma]), phi = np.array([phi]),stop_thres=1e-2,result_show=False)['Sigma']))
+                d_m = r+2*s+(N**2)*(p+r+2*s) # No. of all params
                 LS_BIC_table.loc[p,r,s]['BIC']= LS_log_loss + d_m*np.log(T)/T
                 ML_BIC_table.loc[p,r,s]['BIC']= ML_log_loss + d_m*np.log(T)/T
-                print(p,r,s)
     LS_min_index = LS_BIC_table['BIC'].dropna().astype(float).idxmin()           
     LS_initial_value = LS_BIC_table.loc[LS_min_index]
     
