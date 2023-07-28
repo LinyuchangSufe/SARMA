@@ -1,9 +1,29 @@
 # SARMA
-This is a repository about application code of SARMA paper. 
-We have placed all the relevant program codes we need in the main folder.
+This repository contains the code and results for the real data portion of our SARMA paper. 
 
 
-The "help function for LS.py" provides the basic functions for "BCD_LS.py",
-enabling the implementation of the block coordinate descent (BCD) algorithm for the loss function related to least squares estimation (LSE).
-Similarly, the "help function for MLE.py" complements "BCD_MLE.py", forming the basis for the Quasi-Maximum Likelihood Estimation (QMLE) method.
-"IOLS_VARMA" is a iterative LS method for solving VARMA model.
+
+We have placed all the relevant real data codes we need in the `main` folder.
+
+- The `BCD_LS.py` (`BCD_MLE`) file implements the block coordinate descent algorithm for minimizing the least squares loss function (negative Gaussian quasi likelihood function) of the SARMA model;
+
+- The `help function for LS.py` (`help function for MLE.py`) provides the basic functions for `BCD_LS.py` (`BCD_MLE`);
+
+- The `tensorOp.py` file contains a set of functions related to tensorization and matricization of matrices;
+- The `BIC.py` file chooses $(p,r,s)$ order of SARMA model by Bayesian information criterion;
+- The `forecast.py` contains some forecast function of SARMA model; 
+- The `MACM.py` is a function about matrix autocorrelation function matrix.
+
+- The `IOLS_VARMA.py` is a iterative LS method for solving VARMA model.
+
+
+
+In the `Applicaiton` folder,  
+
+- `FREDMD.csv` is the dataset of FRED-MD, which is download from [FRED-MD: A Monthly Database for Macroeconomic Research- Working Papers - St. Louis Fed (stlouisfed.org)](https://research.stlouisfed.org/wp/more/2015-012);
+
+- The `Empirical example.ipynb` file shows how the content is implemented with the code given above and how it compares to other models.
+
+  
+
+The `requirements.txt` file lists the python packages required by the user.
