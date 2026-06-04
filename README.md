@@ -1,45 +1,113 @@
-# SARMA Paper Reproduction Package
+# Quasi-Maximum Likelihood Estimation for Scalable ARMA Models
 
-Generated: 2026-06-03T15:25:58
+This repository contains the code, final tables, selected result files, and
+paper figures for the manuscript:
 
-This directory is a clean shareable subset for the current `sinica/SARMA_main.tex`
-simulation and real-data settings. It is additive: no original files were
-deleted or moved.
+**Yuchang Lin, Wenyu Li, and Qianqian Zhu. _Quasi-maximum likelihood
+estimation for scalable ARMA models_. Manuscript, 2026.**
 
-## Layout
+The accompanying paper draft is included at
+[`paper/SARMA_arXiv.pdf`](paper/SARMA_arXiv.pdf).
 
+## Paper Summary
+
+The paper studies scalable autoregressive moving average (SARMA) models for
+multivariate time series. Existing scalable ARMA work mainly relies on
+regularized least squares estimation, which is statistically less efficient and
+typically requires sub-Gaussian assumptions. This paper develops a
+quasi-maximum likelihood estimation (QMLE) framework for SARMA models.
+
+The repository reproduces the paper-facing code and outputs for:
+
+- QMLE estimation and asymptotic-variance calculations.
+- A block coordinate descent algorithm for SARMA fitting.
+- BIC-based order selection for the SARMA order `(p, r, s)`.
+- Simulation tables for finite-sample estimation, BIC selection, and ARE.
+- The six-variable FRED-MD empirical application and forecast comparison.
+
+## Citation
+
+If you use this code or the accompanying results, please cite the manuscript.
+Until an arXiv identifier or journal DOI is available, use the following
+provisional BibTeX entry:
+
+```bibtex
+@misc{lin2026sarmaqmle,
+  title  = {Quasi-maximum likelihood estimation for scalable {ARMA} models},
+  author = {Lin, Yuchang and Li, Wenyu and Zhu, Qianqian},
+  year   = {2026},
+  note   = {Manuscript}
+}
+```
+
+Once an arXiv identifier or final publication record is available, replace the
+`note` field with the corresponding arXiv or journal information.
+
+## Package Scope
+
+This branch is a clean reproduction package for the current paper version. It
+is intentionally smaller than the full working directory: remote launch scripts,
+monitor scripts, diagnostics, smoke tests, historical scale-sensitivity runs,
+and experiments not reported in the manuscript are excluded.
+
+The source commit recorded for this package is:
+
+```text
+b69beca
+```
+
+The package was generated on 2026-06-03 and the README was updated on
+2026-06-04.
+
+## Repository Layout
+
+- `paper/SARMA_arXiv.pdf`: current arXiv-style manuscript draft.
 - `code/src`: canonical SARMA implementation used by the experiments.
-- `code/tests11`: only the paper simulation runners and minimum table aggregators.
-- `code/Application`: six-variable FRED-MD real-data runner.
+- `code/tests11`: paper simulation runners and minimum table aggregators.
+- `code/Application`: six-variable FRED-MD empirical runner.
 - `code/data/FRED-MD.csv`: real-data source used by the application.
-- `results/simulations`: final paper-facing simulation tables/configs.
+- `results/simulations`: final paper-facing simulation tables and configs.
 - `results/realdata`: final paper-facing empirical SARMA/VAR run.
 - `paper_tables/main`: manuscript-facing CSV/TEX tables.
 - `paper_tables/from_manuscript`: table environments extracted from the current
   manuscript source for direct comparison.
 - `paper_figures`: real-data figures used by the manuscript.
+- `MANIFEST.csv`: file sizes and SHA256 checksums for the release package.
 
 ## Paper Setting Map
 
-- Paper DGP1 result source: `code/tests11/results/Exp1/diag_balanced_trueinit_lamm0p8_gam0p8_T500_750_1000_n500_dgpseed1012112_20260602`
-- Paper DGP2 / BIC result source: `code/tests11/results/Exp3/combined_strong_symmetric_T500_750_1000_lam06_09_n500_dgpseed1012112_20260601`
-- Paper DGP3 / ARE result source: `code/tests11/results/Exp2/diag_balanced_true_sample_T20000_dgpseed1012112_20260602`
-- Real data result source: `code/Application/results/empirical6_notebook/empirical6_bic10_sarma_var_only_20260530`
+- DGP1 estimation table:
+  `results/simulations/exp1_qmle/`
+- DGP2 BIC table:
+  `results/simulations/exp2_bic/`
+- DGP3 ARE table:
+  `results/simulations/exp3_are/`
+- Real-data empirical result:
+  `results/realdata/empirical6_bic10/`
 
-Historical script/result names still contain older labels such as DGP2 or DGP4.
-The paper names above are the authoritative labels for this package.
+Historical local script and result names may contain older labels such as
+`DGP2`, `DGP3`, or `DGP4`. The paper labels above are the authoritative labels
+for this public release package.
 
-## Reproduction Entry Points
+## Installation
 
-Run from this package root:
+Create a Python environment and install the listed dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run commands from the repository root with:
 
 ```bash
 export PYTHONPATH="$(pwd)/code"
 export SARMA_COMMIT=b69beca
-python code/tests11/test_sarma_core.py
 ```
 
-Main experiment runners:
+## Reproduction Entry Points
+
+The included result tables can be inspected directly without rerunning the
+expensive simulations. To rerun or inspect the configurable runners:
 
 ```bash
 python code/tests11/run_dgp1.py --help
@@ -48,27 +116,37 @@ python code/tests11/run_dgp2_are.py --help
 python code/Application/run_empirical6_notebook.py --help
 ```
 
-Remote `.sh` launch scripts, monitors, diagnostics, smoke tests, historical
-scale-sensitivity runs, and experiments not shown in the manuscript were
-intentionally excluded.
+Main outputs already included in the release:
 
-## Important Real-Data Note
+- `paper_tables/main/tab_DGP1_qmle_x10.csv`
+- `paper_tables/main/tab_BIC_paper_lam07_09.csv`
+- `paper_tables/main/tab_ARE_paper_a0_06_09.csv`
+- `paper_tables/main/table_forecast_from_manuscript.csv`
+- `paper_tables/main/table_forecast_recomputed_from_bic10_metrics.csv`
 
-The available scale-1 empirical result in this package reproduces the current
-selected SARMA order `(1,1,0)` and contains SARMA/VAR metrics. The current
-manuscript forecast table also reports VARMA1/VARMA2, but an exact scale-1
-VARMA metrics source was not found in the current local result tree. Therefore:
+## Real-Data Note
+
+The available scale-1 empirical result in this package reproduces the selected
+SARMA order `(1,1,0)` and contains SARMA/VAR metrics. The manuscript forecast
+table also reports VARMA1/VARMA2, but an exact scale-1 VARMA metrics source was
+not found in the current local result tree. Therefore:
 
 - `paper_tables/main/table_forecast_from_manuscript.csv` preserves the values
   currently pasted in the manuscript.
 - `paper_tables/main/table_forecast_recomputed_from_bic10_metrics.csv`
-  recomputes SARMA/VAR relative improvements from the available scale-1 metrics.
+  recomputes SARMA/VAR relative improvements from the available scale-1
+  metrics.
 
-Also note that the manuscript formula uses RI-RMSFE, while the available
-metrics reproduce the displayed SARMA percentages only when using MSE-relative
-improvement. This should be reviewed before public release.
+The manuscript formula uses RI-RMSFE, while the available metrics reproduce the
+displayed SARMA percentages only when using MSE-relative improvement. This
+point should be reviewed before final journal release.
 
-## Manifest
+## Contact
 
-`MANIFEST.csv` records source path, destination path, file size, and SHA256 for
-each copied or generated file.
+For questions about the code or manuscript, please contact the corresponding
+author:
+
+Qianqian Zhu, School of Statistics and Data Science, Shanghai University of
+Finance and Economics, Shanghai, China.
+
+Email: `zhu.qianqian@mail.shufe.edu.cn`
