@@ -45,10 +45,11 @@ Once an arXiv identifier or final publication record is available, replace the
 
 ## Package Scope
 
-This branch is a clean reproduction package for the current paper version. It
-is intentionally smaller than the full working directory: remote launch scripts,
-monitor scripts, diagnostics, smoke tests, historical scale-sensitivity runs,
-and experiments not reported in the manuscript are excluded.
+This repository snapshot is a clean reproduction package for the current paper
+version. It is intentionally smaller than the full working directory: remote
+launch scripts, monitor scripts, diagnostics, smoke tests, historical
+scale-sensitivity runs, and experiments not reported in the manuscript are
+excluded.
 
 The source commit recorded for this package is:
 
