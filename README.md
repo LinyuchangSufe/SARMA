@@ -1,296 +1,153 @@
-# SARMA: Scalable AutoRegressive Moving Average Model
+# Quasi-Maximum Likelihood Estimation for Scalable ARMA Models
 
-A comprehensive implementation of the Seasonal AutoRegressive Moving Average (SARMA) model with advanced estimation methods, order selection, and empirical applications to macroeconomic data.
+This repository contains the code, final tables, selected result files, and
+paper figures for the manuscript:
 
-## Overview
+**Yuchang Lin, Wenyu Li, and Qianqian Zhu. _Quasi-maximum likelihood
+estimation for scalable ARMA models_. Manuscript, 2026.**
 
-This repository provides a modern, modular implementation of SARMA models with the following key components:
+The accompanying paper draft is included at
+[`paper/SARMA_arXiv.pdf`](paper/SARMA_arXiv.pdf).
 
-- **SARMA Estimator**: High-level Python interface for model fitting and forecasting
-- **Block-Coordinate Descent (BCD)**: Both LS and MLE estimation algorithms
-- **Automatic Order Selection**: BIC-based model selection with parallel computation
-- **Empirical Applications**: Real-world examples using FRED macroeconomic data
-- **Model Comparison**: Benchmarking against VAR, VARMA, and AR models
+## Paper Summary
 
-## Features
+The paper studies scalable autoregressive moving average (SARMA) models for
+multivariate time series. Existing scalable ARMA work mainly relies on
+regularized least squares estimation, which is statistically less efficient and
+typically requires sub-Gaussian assumptions. This paper develops a
+quasi-maximum likelihood estimation (QMLE) framework for SARMA models.
 
-### Core Modeling Capabilities
+The repository reproduces the paper-facing code and outputs for:
 
-- **Flexible SARMA Specification**: Supports arbitrary (p, r, s) orders where:
-  - `p`: AR order
-  - `r`: Number of seasonal AR magnitudes
-  - `s`: Number of seasonal pairs
-  
-- **Dual Estimation Methods**:
-  - Least Squares (LS) estimation with identity covariance
-  - Maximum Likelihood Estimation (MLE) with estimated covariance
-  
-- **Multi-start Optimization**: Robust parameter initialization across multiple starting points
+- QMLE estimation and asymptotic-variance calculations.
+- A block coordinate descent algorithm for SARMA fitting.
+- BIC-based order selection for the SARMA order `(p, r, s)`.
+- Simulation tables for finite-sample estimation, BIC selection, and ARE.
+- The six-variable FRED-MD empirical application and forecast comparison.
 
-- **Automatic Order Selection**: BIC-based criteria with parallel joblib support
+## Citation
 
-- **Forecasting**: One-step and multi-step ahead predictions using tensor representations
+If you use this code or the accompanying results, please cite the manuscript.
+Until an arXiv identifier or journal DOI is available, use the following
+provisional BibTeX entry:
+
+```bibtex
+@misc{lin2026sarmaqmle,
+  title  = {Quasi-maximum likelihood estimation for scalable {ARMA} models},
+  author = {Lin, Yuchang and Li, Wenyu and Zhu, Qianqian},
+  year   = {2026},
+  note   = {Manuscript}
+}
+```
+
+Once an arXiv identifier or final publication record is available, replace the
+`note` field with the corresponding arXiv or journal information.
+
+## Package Scope
+
+This repository snapshot is a clean reproduction package for the current paper
+version. It is intentionally smaller than the full working directory: remote
+launch scripts, monitor scripts, diagnostics, smoke tests, historical
+scale-sensitivity runs, and experiments not reported in the manuscript are
+excluded.
+
+The source commit recorded for this package is:
+
+```text
+b69beca
+```
+
+The package was generated on 2026-06-03 and the README was updated on
+2026-06-04.
+
+## Repository Layout
+
+- `paper/SARMA_arXiv.pdf`: current arXiv-style manuscript draft.
+- `code/src`: canonical SARMA implementation used by the experiments.
+- `code/tests11`: paper simulation runners and minimum table aggregators.
+- `code/Application`: six-variable FRED-MD empirical runner.
+- `code/data/FRED-MD.csv`: real-data source used by the application.
+- `results/simulations`: final paper-facing simulation tables and configs.
+- `results/realdata`: final paper-facing empirical SARMA/VAR run.
+- `paper_tables/main`: manuscript-facing CSV/TEX tables.
+- `paper_tables/from_manuscript`: table environments extracted from the current
+  manuscript source for direct comparison.
+- `paper_figures`: real-data figures used by the manuscript.
+- `MANIFEST.csv`: file sizes and SHA256 checksums for the release package.
+
+## Paper Setting Map
+
+- DGP1 estimation table:
+  `results/simulations/exp1_qmle/`
+- DGP2 BIC table:
+  `results/simulations/exp2_bic/`
+- DGP3 ARE table:
+  `results/simulations/exp3_are/`
+- Real-data empirical result:
+  `results/realdata/empirical6_bic10/`
+
+Historical local script and result names may contain older labels such as
+`DGP2`, `DGP3`, or `DGP4`. The paper labels above are the authoritative labels
+for this public release package.
 
 ## Installation
 
-### Prerequisites
-
-- Python 3.8+
-- NumPy, SciPy, Pandas
-- Joblib (for parallel processing)
-
-### Setup
+Create a Python environment and install the listed dependencies:
 
 ```bash
-git clone https://github.com/LinyuchangSufe/SARMA.git
-cd SARMA
 pip install -r requirements.txt
 ```
 
-### Dependencies
+Run commands from the repository root with:
 
-Key packages (see `requirements.txt`):
-- numpy==1.24.3
-- scipy==1.10.1
-- pandas==2.0.1
-- scikit-learn (implied by joblib)
-- matplotlib==3.7.1
-- statsmodels==0.14.0
-- torch==2.0.1 (optional, for future extensions)
-
-## Project Structure
-
-```
-SARMA/
-├── src/
-│   ├── sarma/
-│   │   ├── estimator.py          # High-level SARMAEstimator class
-│   │   ├── optim.py              # BCD_SARMA optimization engine
-│   │   ├── selection.py          # BIC order selection with parallel support
-│   │   ├── param_utils.py        # Parameter utilities
-│   │   └── __init__.py
-│   └── utils/
-│       ├── help_function.py      # Core utility functions (get_A, gen_X_AR, etc.)
-│       ├── tensorOp.py           # Tensor operations (unfold, fold, matricization)
-│       └── __init__.py
-├── Application/
-│   ├── Empirical example.ipynb   # Real-world FREDMD example
-│   ├── Compare_method.py         # Benchmark against VAR, VARMA, AR
-│   ├── current_analysis.py       # Data preparation and analysis
-│   ├── MACM_realdata.pdf         # Matrix Autocorrelation Function results
-│   └── coef_G.pdf
-├── data/
-│   ├── FRED-MD.csv              # Monthly macroeconomic indicators
-│   ├── FRED-QD.csv              # Quarterly macroeconomic indicators
-│   ├── FRED_process.py          # Data preprocessing scripts
-│   └── macro20.csv
-├── OtherModel/
-│   ├── IOLS_VARMA1.py           # Iterative OLS for VARMA comparison
-│   └── __pycache__/
-
+```bash
+export PYTHONPATH="$(pwd)/code"
+export SARMA_COMMIT=b69beca
 ```
 
-## Quick Start
+## Reproduction Entry Points
 
-### Basic Usage
+The included result tables can be inspected directly without rerunning the
+expensive simulations. To rerun or inspect the configurable runners:
 
-```python
-import numpy as np
-from src.sarma.estimator import SARMAEstimator
-
-# Load your time series data
-y = np.load('your_data.npy')  # shape: (T, N)
-
-# Create and fit estimator
-estimator = SARMAEstimator(
-    P=200,          # truncation parameter
-    n_iter=100,     # BCD iterations
-    stop_thres=1e-6,
-    verbose=True
-)
-
-# Automatic order selection + fitting
-estimator.fit(y, n_jobs_BIC=4)  # Uses BIC to select (p,r,s)
-
-# Get fitted parameters
-params = estimator.get_params()
-print(f"Selected orders: p={params['p']}, r={params['r']}, s={params['s']}")
-
-# Forecast
-y_forecast = estimator.predict(y, steps=10)
-print(y_forecast.shape)  # (10, N)
-
-# Model summary
-print(estimator.summary())
+```bash
+python code/tests11/run_dgp1.py --help
+python code/tests11/run_dgp3_bic.py --help
+python code/tests11/run_dgp2_are.py --help
+python code/Application/run_empirical6_notebook.py --help
 ```
 
-### Specifying Orders Manually
+Main outputs already included in the release:
 
-```python
-# If you know the orders, fit directly
-estimator.fit(y, p=1, r=1, s=0, n_jobs_BIC=1)
+- `paper_tables/main/tab_DGP1_qmle_x10.csv`
+- `paper_tables/main/tab_BIC_paper_lam07_09.csv`
+- `paper_tables/main/tab_ARE_paper_a0_06_09.csv`
+- `paper_tables/main/table_forecast_from_manuscript.csv`
+- `paper_tables/main/table_forecast_recomputed_from_bic10_metrics.csv`
 
-# Or use a different estimation method
-estimator.SARMA_fitBCD_SARMA(
-    y, p=1, r=1, s=0,
-    lmbd=np.array([0.5]),
-    eta=np.array([[0.5, np.pi/2]]),
-    esti_method='mle',  # 'ls' or 'mle'
-    P=150,
-    n_iter=100,
-    Cal_AsyVar=True
-)
-```
+## Real-Data Note
 
-### Empirical Application: FRED Data
+The available scale-1 empirical result in this package reproduces the selected
+SARMA order `(1,1,0)` and contains SARMA/VAR metrics. The manuscript forecast
+table also reports VARMA1/VARMA2, but an exact scale-1 VARMA metrics source was
+not found in the current local result tree. Therefore:
 
-See [Application/Empirical example.ipynb](Application/Empirical%20example.ipynb) for a complete walkthrough:
+- `paper_tables/main/table_forecast_from_manuscript.csv` preserves the values
+  currently pasted in the manuscript.
+- `paper_tables/main/table_forecast_recomputed_from_bic10_metrics.csv`
+  recomputes SARMA/VAR relative improvements from the available scale-1
+  metrics.
 
-```python
-import pandas as pd
-from src.sarma.estimator import SARMAEstimator
+The manuscript formula uses RI-RMSFE, while the available metrics reproduce the
+displayed SARMA percentages only when using MSE-relative improvement. This
+point should be reviewed before final journal release.
 
-# Load FRED macroeconomic data
-df = pd.read_csv('data/FRED-MD.csv', index_col=0, parse_dates=True)
+## Contact
 
-# Select variables and apply transformations
-vars_ = ['RPI', 'INDPRO', 'UNRATE', 'M2SL', 'CPIAUCSL', 'DPCERA3M086SBEA']
-df = df[vars_].iloc[1:]  # skip header row
+For questions about the code or manuscript, please contact the corresponding
+author:
 
-# Apply FRED standard transformations
-# (see Application/current_analysis.py for full preprocessing)
+Qianqian Zhu, School of Statistics and Data Science, Shanghai University of
+Finance and Economics, Shanghai, China.
 
-# Standardize
-df = (df - df.mean()) / df.std()
-y = df.values
-
-# Fit SARMA
-est = SARMAEstimator(P=200, n_iter=100, stop_thres=1e-5, verbose=True)
-est.fit(y)
-
-# Compare with benchmarks
-from Application.Compare_method import var_one_step_forecast, varma_one_step_forecast
-```
-
-## Key Components
-
-### SARMAEstimator (estimator.py)
-
-Main user-facing class providing:
-- `fit()`: Automatic order selection and model fitting
-- `predict()`: Multi-step forecasting
-- `get_params()`: Retrieve fitted parameters
-- `summary()`: Human-readable model summary
-
-**Constructor Parameters:**
-- `P`: Truncation for seasonal design matrices (default: 200)
-- `n_iter`: Max BCD iterations (default: 100)
-- `stop_thres`: Convergence tolerance (default: 1e-6)
-- `grid_mode`: 'full', 'random', or 'auto' for multi-start initialization
-- `n_random`: Number of random initializations (default: 2000)
-- `seed`: Random seed for reproducibility
-- `verbose`: Enable detailed logging
-
-**Output: SARMAFitResult dataclass**
-- `loss`: Final loss value
-- `p, r, s`: Selected orders
-- `lmbd`: Seasonal AR magnitudes (shape: r)
-- `eta`: Seasonal parameters (shape: s × 2)
-- `G`: VAR coefficient tensor (shape: N × N × d)
-- `Sigma`: Estimated covariance matrix (shape: N × N)
-- `AsyVar`: Asymptotic variance
-- `A`: Lagged operator tensor
-
-### BCD Solver (optim.py)
-
-Block-Coordinate Descent algorithm with:
-- Per-parameter optimization for λ (seasonal AR magnitudes)
-- Per-pair optimization for η = (γ, φ) (seasonal phase/amplitude)
-- Convex LS updates for G given current seasonal parameters
-- Optional Sigma re-estimation (MLE mode)
-
-**Key Function:**
-```python
-BCD_SARMA(y, p, r, s, lmbd=None, eta=None, Sigma=None, 
-          esti_method='ls', P=150, n_iter=500, stop_thres=1e-5, 
-          Cal_AsyVar=True)
-```
-
-### Order Selection (selection.py)
-
-BIC-based model selection with parallel computation:
-```python
-BIC_parallel_joblib(y, P=200, seed=None, verbose=False, n_jobs_BIC=1)
-```
-
-Returns dictionary with:
-- `ML_min_index`: Selected (p, r, s)
-- `ML_lmbd_value`: Initial λ estimate
-- `ML_eta_value`: Initial η estimate
-- Full BIC surface and results
-
-
-## Model Comparison
-
-The [Application/Compare_method.py](Application/Compare%20method.py) module provides benchmark methods:
-
-- `var_one_step_forecast()`: VAR (statsmodels)
-- `varma_one_step_forecast()`: VARMA/ARIMA (statsmodels)
-- `ar_one_step_forecast()`: Individual AR models (statsmodels)
-
-Example comparison:
-```python
-from Application.Compare_method import var_one_step_forecast
-
-# SARMA forecast
-sarma_pred = estimator.predict(y, steps=1)
-
-# VAR benchmark (p=1)
-var_pred = var_one_step_forecast(y, p=1)
-
-# Compare MSE
-mse_sarma = np.mean((y_true - sarma_pred)**2)
-mse_var = np.mean((y_true - var_pred)**2)
-```
-
-## Empirical Data
-
-### FRED-MD (Monthly)
-Monthly macroeconomic indicators from the Federal Reserve Economic Data (FRED) database:
-- 128+ variables
-- Monthly frequency
-- Source: [FRED-MD: A Monthly Database for Macroeconomic Research](https://research.stlouisfed.org/wp/more/2015-012)
-
-### FRED-QD (Quarterly)
-Quarterly equivalent of FRED-MD dataset
-
-### Example Variables
-Common macroeconomic variables with FRED transform codes:
-- **RPI**: Retail Price Index (log-difference: code 5)
-- **INDPRO**: Industrial Production (log-difference: code 5)
-- **UNRATE**: Unemployment Rate (log-difference: code 5)
-- **M2SL**: M2 Money Stock (2nd log-difference: code 6)
-- **CPIAUCSL**: CPI All Items (2nd log-difference: code 6)
-
-## Performance Characteristics
-
-### Computational Complexity
-- **BCD Iterations**: Typically 10-50 iterations for convergence
-- **Single Iteration**: O((T-p)Nd²) where d = p+r+2s
-- **Order Selection (BIC)**: Parallelizable across (p,r,s) grid
-- **Multi-start**: Linear in number of initializations
-
-
-## License
-
-[Specify your license - e.g., MIT, Apache 2.0]
-
-## Contact & Support
-
-For questions, issues, or suggestions:
-- GitHub Issues: [SARMA/issues](https://github.com/LinyuchangSufe/SARMA/issues)
-- Email: [lin_yuchang@163.com]
-
----
-
-**Note**: This implementation is designed for research and educational purposes. For production forecasting applications, consider ensemble methods and robustness checks as presented in the empirical examples.
+Email: `zhu.qianqian@mail.shufe.edu.cn`

@@ -1,0 +1,22 @@
+{
+  "experiment": "Exp1",
+  "purpose": "500-rep diagonal balanced Phi design",
+  "N": 6,
+  "order": {"p": 1, "r": 1, "s": 1},
+  "T_values": [500, 750, 1000],
+  "n_reps": 500,
+  "n_jobs": 100,
+  "seed_base": 360000,
+  "dgp_seed": 1012112,
+  "phi_design": "diag_balanced_pm05",
+  "Phi_eigenvalues": [0.50, 0.50, 0.50, -0.50, -0.50, -0.50],
+  "Phi_basis": "identity",
+  "lambda_0": -0.8,
+  "gamma_0": 0.8,
+  "phi_0": 0.7853981633974483,
+  "init_mode": "true",
+  "g_update": "ols",
+  "dists": ["normal", "t5"],
+  "sigma_types": ["identity", "compound"],
+  "SARMA_COMMIT": "b69beca"
+}

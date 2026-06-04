@@ -1,0 +1,47 @@
+{
+  "bic_penalty_scale": 1.0,
+  "elapsed_seconds": 24.875768875004724,
+  "n_jobs_BIC": 1,
+  "order_source": "bic_full_sample",
+  "selected_eta": [],
+  "selected_lmbd": [
+    0.8423854587327815
+  ],
+  "selected_order": [
+    1,
+    1,
+    0
+  ],
+  "selected_row": {
+    "BIC": 3226.325522291082,
+    "BIC_current": 3226.325522291082,
+    "BIC_logdet_T": -1558.2964773819117,
+    "BIC_logdet_eff": -1555.6744777089182,
+    "Error": "",
+    "Loss": 3.2601319730047704,
+    "T": 798,
+    "T_eff": 797,
+    "converged": 1,
+    "eta": [],
+    "initial_eta": [],
+    "initial_lmbd": [
+      0.8
+    ],
+    "iter_no": 18,
+    "k_params": 94,
+    "lmbd": [
+      0.8423854587327815
+    ],
+    "logdet_sigma": -2.73986802699523,
+    "loss_diff": 2.055153810893051e-09,
+    "loss_plot_len": 19,
+    "penalty_T": 628.118208160282,
+    "penalty_eff": 628.0003398062802,
+    "penalty_scale": 1.0,
+    "profile_candidate_count": 17,
+    "profile_candidate_index": 16,
+    "profile_loss": 3.2636445073422267,
+    "theta_diff": 1.183133463855679e-05,
+    "trace_avg": 6.0
+  }
+}
